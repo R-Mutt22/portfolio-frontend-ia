@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeSanitize from 'rehype-sanitize'; // Importamos la sanitización XSS
 import { enviarConsulta, type Mensaje } from '../services/chatService';
 
 export const ChatBot: React.FC = () => {
@@ -52,7 +53,10 @@ export const ChatBot: React.FC = () => {
                 </div>
                 <div className="message-box">
                   {msg.emisor === 'ia' ? (
-                    <ReactMarkdown>{msg.texto}</ReactMarkdown>
+                    /* Sanitizamos el markdown contra ataques XSS */
+                    <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
+                      {msg.texto}
+                    </ReactMarkdown>
                   ) : (
                     msg.texto
                   )}
@@ -79,7 +83,11 @@ export const ChatBot: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Pregunta a la IA sobre mi perfil..."
             disabled={cargando}
+            maxLength={500} /* Límite de 500 caracteres */
           />
+          {/* Contador visual de caracteres */}
+          <span className="char-counter">{input.length}/500</span>
+
           <button type="submit" disabled={cargando || !input.trim()} title="Enviar">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"></line>

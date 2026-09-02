@@ -217,3 +217,12 @@ body {
     padding: 0.5rem 0.8rem;
   }
 }
+
+/* Estilo para el contador de caracteres del chat */
+.char-counter {
+  font-size: 0.75rem;
+  color: #8e918f;
+  margin-right: 0.5rem;
+  user-select: none;
+  flex-shrink: 0;
+}

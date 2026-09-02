@@ -6,19 +6,31 @@ export interface Mensaje {
 }
 
 export async function enviarConsulta(pregunta: string): Promise<string> {
+  // 1. Validación de seguridad extra antes de consumir la red
+  if (!pregunta || pregunta.trim().length > 500) {
+    throw new Error('La consulta no es válida o excede el límite de caracteres.');
+  }
+
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ pregunta }),
+    body: JSON.stringify({ pregunta: pregunta.trim() }),
   });
 
-  const data = await response.json();
-
+  // 2. Manejo seguro si la respuesta no es exitosa (HTTP status != 200)
   if (!response.ok) {
-    throw new Error(data.error || 'Error de comunicación con la IA');
+    let mensajeError = 'Error de comunicación con el servidor';
+    try {
+      const dataError = await response.json();
+      mensajeError = dataError.error || mensajeError;
+    } catch {
+      // Si el backend devuelve un HTML de error en vez de JSON
+    }
+    throw new Error(mensajeError);
   }
 
+  const data = await response.json();
   return data.respuesta;
 }
