@@ -1,13 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
 import { ChatBot } from '../components/ChatBot';
+import '../styles/global.css';
 ---
 
-<Layout title="Portafolio Matías Zelarayán">
-  <main style="padding: 2rem; text-align: center;">
-    <h1>Asistente IA - Portafolio</h1>
-    <p style="margin-bottom: 2rem;">Preguntas en tiempo real a mi modelo RAG alojado en Spring Boot.</p>
-    
+<Layout title="Matías Zelarayán - AI Portfolio">
+  <Sidebar />
+  <main>
     <ChatBot client:load />
   </main>
 </Layout>
