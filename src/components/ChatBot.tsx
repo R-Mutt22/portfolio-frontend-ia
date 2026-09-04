@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import rehypeSanitize from 'rehype-sanitize'; // Importamos la sanitización XSS
+import rehypeSanitize from 'rehype-sanitize';
 import { enviarConsulta, type Mensaje } from '../services/chatService';
 
 export const ChatBot: React.FC = () => {
@@ -42,7 +42,9 @@ export const ChatBot: React.FC = () => {
         {mensajes.length === 0 ? (
           <div className="hero-section">
             <h1 className="hero-title">¿Por dónde empezamos?</h1>
-            <p className="hero-subtitle">Hazme cualquier pregunta sobre mi experiencia en Spring Boot, Solana o QA.</p>
+            <p className="hero-subtitle">
+              Hazme cualquier pregunta sobre mi experiencia en Spring Boot, Solana o QA.
+            </p>
           </div>
         ) : (
           <div className="chat-history">
@@ -53,7 +55,6 @@ export const ChatBot: React.FC = () => {
                 </div>
                 <div className="message-box">
                   {msg.emisor === 'ia' ? (
-                    /* Sanitizamos el markdown contra ataques XSS */
                     <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
                       {msg.texto}
                     </ReactMarkdown>
@@ -63,12 +64,20 @@ export const ChatBot: React.FC = () => {
                 </div>
               </div>
             ))}
+            
+            {/* Estado de carga con aclaración de latencia de Render */}
             {cargando && (
               <div className="chat-bubble ia">
                 <div className="avatar-badge">✦</div>
-                <div className="message-box loading-state">Pensando respuesta...</div>
+                <div className="message-box loading-state">
+                  <span>Pensando respuesta...</span>
+                  <small style={{ fontSize: '0.75rem', opacity: 0.8, display: 'block', marginTop: '4px' }}>
+                    (Si el servidor estaba inactivo, puede tardar en responder unos segundos mientras se despierta)
+                  </small>
+                </div>
               </div>
             )}
+            
             <div ref={chatEndRef} />
           </div>
         )}
@@ -83,13 +92,22 @@ export const ChatBot: React.FC = () => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Pregunta a la IA sobre mi perfil..."
             disabled={cargando}
-            maxLength={500} /* Límite de 500 caracteres */
+            maxLength={500}
           />
-          {/* Contador visual de caracteres */}
           <span className="char-counter">{input.length}/500</span>
 
           <button type="submit" disabled={cargando || !input.trim()} title="Enviar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
             </svg>
