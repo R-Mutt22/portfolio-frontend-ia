@@ -1,23 +1,80 @@
+---
+import type React from 'react';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  children?: React.ReactNode;
+}
+
+const {
+  title = "Matías Zelarayán | Full Stack Developer & AI Portfolio",
+  description = "Portafolio profesional de Matías Zelarayán. Desarrollador Full Stack Jr especializado en Java, Spring Boot, React, Astro y soluciones integradas con Inteligencia Artificial.",
+  image = "/og-image.png"
+} = Astro.props;
+
+const siteURL = Astro.site ? Astro.site.href : "https://matiaszelarayan.tech";
+const canonicalURL = new URL(Astro.url.pathname, siteURL).href;
+const imageURL = new URL(image, siteURL).href;
+---
+
 <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO Principal -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <meta name="author" content="Matías Zelarayán" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={imageURL} />
+
+    <!-- Twitter Cards -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={imageURL} />
+
+    <!-- Datos Estructurados (Schema.org / JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Matías Zelarayán",
+        "url": "https://matiaszelarayan.tech",
+        "jobTitle": "Full Stack Developer",
+        "sameAs": [
+          "https://github.com/R-Mutt22"
+        ],
+        "knowsAbout": ["Java", "Spring Boot", "React", "Astro", "TypeScript", "Web3", "QA Testing"]
+      }
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
 </html>
 
 <style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
+  html,
+  body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+  }
 </style>
