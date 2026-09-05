@@ -98,13 +98,15 @@ const cvUrl = "https://matias-zelarayan.pages.dev/";
   @media (max-width: 768px) {
     .sidebar {
       width: 100%;
-      height: 56px;
+      height: calc(56px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: env(safe-area-inset-bottom, 0px);
       flex-direction: row;
       top: auto;
       bottom: 0;
       border-right: none;
       border-top: 1px solid #282a2c;
-      padding: 0 1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
 
     .top-nav, .social-links {
