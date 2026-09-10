@@ -55,7 +55,14 @@ export const ChatBot: React.FC = () => {
                 </div>
                 <div className="message-box">
                   {msg.emisor === 'ia' ? (
-                    <ReactMarkdown rehypePlugins={[rehypeSanitize]}>
+                    <ReactMarkdown 
+                      rehypePlugins={[rehypeSanitize]}
+                      components={{
+                        a: ({ node, ...props }) => (
+                          <a {...props} target="_blank" rel="noopener noreferrer" />
+                        )
+                      }}
+                    >
                       {msg.texto}
                     </ReactMarkdown>
                   ) : (
@@ -72,7 +79,7 @@ export const ChatBot: React.FC = () => {
                 <div className="message-box loading-state">
                   <span>Pensando respuesta...</span>
                   <small style={{ fontSize: '0.75rem', opacity: 0.8, display: 'block', marginTop: '4px' }}>
-                    (Si el servidor estaba inactivo, puede tardar en responder unos segundos mientras se despierta)
+                    (Si el servidor estaba inactivo, puede tardar en responder mientras se despierta)
                   </small>
                 </div>
               </div>

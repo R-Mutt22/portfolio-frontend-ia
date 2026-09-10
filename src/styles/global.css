@@ -139,6 +139,59 @@ body {
   margin-bottom: 0.3rem;
 }
 
+/* Estilo para Enlaces (Links) dentro del chat */
+.message-box a,
+.chat-link {
+  color: #a8c7fa;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: rgba(168, 199, 250, 0.4);
+  text-underline-offset: 3px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  word-break: break-word;
+}
+
+.message-box a:hover,
+.chat-link:hover {
+  color: #c2e7ff;
+  text-decoration-color: #c2e7ff;
+  background-color: rgba(168, 199, 250, 0.12);
+}
+
+/* Elementos de código y citas en Markdown */
+.message-box code {
+  background-color: #282a2c;
+  color: #a8c7fa;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.875em;
+}
+
+.message-box pre {
+  background-color: #131314;
+  border: 1px solid #282a2c;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
+  margin-bottom: 0.8rem;
+}
+
+.message-box pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+.message-box blockquote {
+  border-left: 3px solid #a8c7fa;
+  padding-left: 0.8rem;
+  color: #c4c7c5;
+  margin-bottom: 0.8rem;
+  font-style: italic;
+}
+
 /* Input inferior de entrada */
 .input-bar-wrapper {
   padding: 1rem;
@@ -198,7 +251,6 @@ body {
 @media (max-width: 768px) {
   .chat-layout {
     margin-left: 0;
-    /* Resta la altura del Sidebar (56px) y la barra de gestos del sistema en móviles */
     height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px));
   }
 
