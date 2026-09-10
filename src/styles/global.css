@@ -44,6 +44,7 @@ body {
   font-weight: 600;
   background: linear-gradient(90deg, #4285f4, #d96570, #9b51e0);
   -webkit-background-clip: text;
+  background-clip: text; /* Añadido para eliminar la advertencia */
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.8rem;
 }
