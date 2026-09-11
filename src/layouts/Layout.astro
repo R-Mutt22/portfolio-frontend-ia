@@ -21,31 +21,38 @@ const imageURL = new URL(image, siteURL).href;
 // Estructura de datos Schema.org (JSON-LD)
 const schemaData = {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Matías Zelarayán",
-  "url": "https://matiaszelarayan.tech",
-  "jobTitle": "Full Stack Developer & QA Tester",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "Rosario",
-    "addressRegion": "Santa Fe",
-    "addressCountry": "AR"
-  },
-  "sameAs": [
-    "https://github.com/R-Mutt22",
-    "https://medium.com/@r.mutt1917"
-  ],
-  "knowsAbout": [
-    "Java",
-    "Spring Boot",
-    "React",
-    "Astro",
-    "TypeScript",
-    "Node.js",
-    "Web3",
-    "QA Testing",
-    "Solana"
-  ]
+  "@type": "ProfilePage",
+  "mainEntity": {
+    "@type": "Person",
+    "name": "Matías Zelarayán",
+    "url": "https://matiaszelarayan.tech",
+    "jobTitle": "Full Stack Developer & QA Tester",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Rosario",
+      "addressRegion": "Santa Fe",
+      "addressCountry": "AR"
+    },
+    "sameAs": [
+      "https://github.com/R-Mutt22",
+      "https://matias-zelarayan.pages.dev/",
+      "https://www.linkedin.com/in/matiaszelarayan22",
+      "https://x.com/r_mutt22",
+      "https://www.linkedin.com/in/matiaszelarayan22/",
+      "https://medium.com/@r.mutt1917"
+    ],
+    "knowsAbout": [
+      "Java",
+      "Spring Boot",
+      "React",
+      "Astro",
+      "TypeScript",
+      "Node.js",
+      "Web3",
+      "QA Testing",
+      "Solana"
+    ]
+  }
 };
 ---
 
