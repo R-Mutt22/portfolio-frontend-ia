@@ -35,11 +35,10 @@ const schemaData = {
     },
     "sameAs": [
       "https://github.com/R-Mutt22",
-      "https://matias-zelarayan.pages.dev/",
-      "https://www.linkedin.com/in/matiaszelarayan22",
-      "https://x.com/r_mutt22",
       "https://www.linkedin.com/in/matiaszelarayan22/",
-      "https://medium.com/@r.mutt1917"
+      "https://x.com/r_mutt22",
+      "https://medium.com/@r.mutt1917",
+      "https://matias-zelarayan.pages.dev/"
     ],
     "knowsAbout": [
       "Java",
@@ -89,7 +88,7 @@ const schemaData = {
     <meta property="twitter:image" content={imageURL} />
 
     <!-- Datos Estructurados (Schema.org / JSON-LD) -->
-    <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(schemaData)} />
   </head>
   <body>
     <slot />
