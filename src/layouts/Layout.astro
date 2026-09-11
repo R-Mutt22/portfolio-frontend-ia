@@ -17,6 +17,36 @@ const {
 const siteURL = Astro.site ? Astro.site.href : "https://matiaszelarayan.tech";
 const canonicalURL = new URL(Astro.url.pathname, siteURL).href;
 const imageURL = new URL(image, siteURL).href;
+
+// Estructura de datos Schema.org (JSON-LD)
+const schemaData = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Matías Zelarayán",
+  "url": "https://matiaszelarayan.tech",
+  "jobTitle": "Full Stack Developer & QA Tester",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Rosario",
+    "addressRegion": "Santa Fe",
+    "addressCountry": "AR"
+  },
+  "sameAs": [
+    "https://github.com/R-Mutt22",
+    "https://medium.com/@r.mutt1917"
+  ],
+  "knowsAbout": [
+    "Java",
+    "Spring Boot",
+    "React",
+    "Astro",
+    "TypeScript",
+    "Node.js",
+    "Web3",
+    "QA Testing",
+    "Solana"
+  ]
+};
 ---
 
 <!doctype html>
@@ -33,10 +63,11 @@ const imageURL = new URL(image, siteURL).href;
     <meta name="title" content={title} />
     <meta name="description" content={description} />
     <meta name="author" content="Matías Zelarayán" />
+    <meta name="keywords" content="Matías Zelarayán, Desarrollador Full Stack, Java, Spring Boot, React, QA Tester, Rosario, Portfolio IA" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalURL} />
 
-    <!-- Open Graph -->
+    <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
@@ -51,19 +82,7 @@ const imageURL = new URL(image, siteURL).href;
     <meta property="twitter:image" content={imageURL} />
 
     <!-- Datos Estructurados (Schema.org / JSON-LD) -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Matías Zelarayán",
-        "url": "https://matiaszelarayan.tech",
-        "jobTitle": "Full Stack Developer",
-        "sameAs": [
-          "https://github.com/R-Mutt22"
-        ],
-        "knowsAbout": ["Java", "Spring Boot", "React", "Astro", "TypeScript", "Web3", "QA Testing"]
-      }
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(schemaData)} />
   </head>
   <body>
     <slot />
