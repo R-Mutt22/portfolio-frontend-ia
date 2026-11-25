@@ -12,20 +12,20 @@ const POOL_SUGERENCIAS = [
   '¿Cómo funciona este asistente con Spring AI?',
   '¿Cuál es su stack principal en Backend?',
   '¿Qué proyectos desarrolló con Java y Spring Boot?',
-  
+
   // Proyectos Destacados (Métricas e Impacto)
   '¿Cómo escaló el backend para +125.000 usuarios?',
   '¿Qué rol tuvo en el hackathon Alumnithon 2025?',
   '¿Cómo construyó ArtBlink en Solana en 48 horas?',
-  
+
   // Calidad, Accesibilidad y WPO
   '¿Qué herramientas usa en QA Automation?',
   '¿Cómo aplica accesibilidad WCAG y WPO?',
-  
+
   // Perfil Híbrido (Arte, Antropología y Cultura)
   '¿Cómo cruza el arte y la antropología con el código?',
   '¿Qué hizo en FAER Festival y Casa de Piedra?',
-  
+
   // Fit Cultural y Contacto
   '¿Qué tipo de equipo o proyecto busca hoy?',
   '¿Qué hace fuera de programar?',
@@ -92,7 +92,7 @@ export const ChatBot: React.FC = () => {
     try {
       const respuestaIA = await enviarConsulta(textoLimpio);
       setMensajes((prev) => [...prev, { emisor: 'ia', texto: respuestaIA }]);
-    } catch (error) {
+    } catch {
       setMensajes((prev) => [
         ...prev,
         {
@@ -133,33 +133,14 @@ export const ChatBot: React.FC = () => {
               Hazme cualquier pregunta sobre mi experiencia en Spring Boot, Solana o QA.
             </p>
 
-            <div
-              className="suggestion-chips"
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '8px',
-                justifyContent: 'center',
-                marginTop: '18px',
-                maxWidth: '680px',
-              }}
-            >
+            <div className="suggestion-chips">
               {chipsAleatorios.map((chip) => (
                 <button
                   key={chip}
                   type="button"
+                  className="suggestion-chip"
                   disabled={cargando}
                   onClick={() => enviarPregunta(chip)}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(255, 255, 255, 0.14)',
-                    borderRadius: '999px',
-                    color: 'inherit',
-                    fontSize: '0.82rem',
-                    padding: '6px 14px',
-                    cursor: cargando ? 'not-allowed' : 'pointer',
-                    opacity: cargando ? 0.6 : 0.92,
-                  }}
                 >
                   {chip}
                 </button>
@@ -186,26 +167,11 @@ export const ChatBot: React.FC = () => {
                       >
                         {msg.texto}
                       </ReactMarkdown>
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'flex-end',
-                          marginTop: '8px',
-                        }}
-                      >
+                      <div className="message-actions">
                         <button
                           type="button"
+                          className="copy-btn"
                           onClick={() => handleCopiar(msg.texto, idx)}
-                          style={{
-                            background: 'transparent',
-                            border: '1px solid rgba(255, 255, 255, 0.14)',
-                            borderRadius: '6px',
-                            color: 'inherit',
-                            fontSize: '0.72rem',
-                            padding: '3px 8px',
-                            cursor: 'pointer',
-                            opacity: 0.75,
-                          }}
                         >
                           {copiadoIdx === idx ? 'Copiado ✓' : 'Copiar'}
                         </button>
@@ -228,14 +194,7 @@ export const ChatBot: React.FC = () => {
                       ? 'Despertando el servidor o procesando respuesta...'
                       : 'Pensando respuesta...'}
                   </span>
-                  <small
-                    style={{
-                      fontSize: '0.75rem',
-                      opacity: 0.8,
-                      display: 'block',
-                      marginTop: '4px',
-                    }}
-                  >
+                  <small className="loading-subtext">
                     {esperaExtendida
                       ? 'En el plan gratuito de Render el arranque tras inactividad puede demorar unos segundos.'
                       : '(Si el servidor estaba inactivo, puede tardar en responder mientras se despierta)'}
