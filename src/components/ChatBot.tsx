@@ -7,10 +7,48 @@ import {
   type Mensaje,
 } from '../services/chatService';
 
+const POOL_SUGERENCIAS = [
+  // Arquitectura IA & Stack Principal
+  '¿Cómo funciona este asistente con Spring AI?',
+  '¿Cuál es su stack principal en Backend?',
+  '¿Qué proyectos desarrolló con Java y Spring Boot?',
+  
+  // Proyectos Destacados (Métricas e Impacto)
+  '¿Cómo escaló el backend para +125.000 usuarios?',
+  '¿Qué rol tuvo en el hackathon Alumnithon 2025?',
+  '¿Cómo construyó ArtBlink en Solana en 48 horas?',
+  
+  // Calidad, Accesibilidad y WPO
+  '¿Qué herramientas usa en QA Automation?',
+  '¿Cómo aplica accesibilidad WCAG y WPO?',
+  
+  // Perfil Híbrido (Arte, Antropología y Cultura)
+  '¿Cómo cruza el arte y la antropología con el código?',
+  '¿Qué hizo en FAER Festival y Casa de Piedra?',
+  
+  // Fit Cultural y Contacto
+  '¿Qué tipo de equipo o proyecto busca hoy?',
+  '¿Qué hace fuera de programar?',
+];
+
+function obtenerChipsAleatorios(cantidad = 4): string[] {
+  const copia = [...POOL_SUGERENCIAS];
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia.slice(0, cantidad);
+}
+
 export const ChatBot: React.FC = () => {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [input, setInput] = useState('');
   const [cargando, setCargando] = useState(false);
+  const [esperaExtendida, setEsperaExtendida] = useState(false);
+  const [chipsAleatorios, setChipsAleatorios] = useState<string[]>(() =>
+    obtenerChipsAleatorios(4)
+  );
+  const [copiadoIdx, setCopiadoIdx] = useState<number | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -22,19 +60,37 @@ export const ChatBot: React.FC = () => {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [mensajes, cargando]);
+  }, [mensajes, cargando, esperaExtendida]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || cargando) return;
+  useEffect(() => {
+    if (!cargando) {
+      setEsperaExtendida(false);
+      return;
+    }
 
-    const textoUsuario = input.trim();
+    const timer = window.setTimeout(() => {
+      setEsperaExtendida(true);
+    }, 5000);
+
+    return () => window.clearTimeout(timer);
+  }, [cargando]);
+
+  useEffect(() => {
+    if (mensajes.length === 0) {
+      setChipsAleatorios(obtenerChipsAleatorios(4));
+    }
+  }, [mensajes.length]);
+
+  const enviarPregunta = async (textoPregunta: string) => {
+    const textoLimpio = textoPregunta.trim();
+    if (!textoLimpio || cargando) return;
+
     setInput('');
-    setMensajes((prev) => [...prev, { emisor: 'usuario', texto: textoUsuario }]);
+    setMensajes((prev) => [...prev, { emisor: 'usuario', texto: textoLimpio }]);
     setCargando(true);
 
     try {
-      const respuestaIA = await enviarConsulta(textoUsuario);
+      const respuestaIA = await enviarConsulta(textoLimpio);
       setMensajes((prev) => [...prev, { emisor: 'ia', texto: respuestaIA }]);
     } catch (error) {
       setMensajes((prev) => [
@@ -49,6 +105,23 @@ export const ChatBot: React.FC = () => {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await enviarPregunta(input);
+  };
+
+  const handleCopiar = async (texto: string, idx: number) => {
+    try {
+      await navigator.clipboard.writeText(texto);
+      setCopiadoIdx(idx);
+      window.setTimeout(() => {
+        setCopiadoIdx((prev) => (prev === idx ? null : prev));
+      }, 2000);
+    } catch {
+      // No interrumpe la UI si el portapapeles no está disponible
+    }
+  };
+
   return (
     <div className="chat-layout">
       {/* Zona de contenido escroleable */}
@@ -59,6 +132,39 @@ export const ChatBot: React.FC = () => {
             <p className="hero-subtitle">
               Hazme cualquier pregunta sobre mi experiencia en Spring Boot, Solana o QA.
             </p>
+
+            <div
+              className="suggestion-chips"
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '8px',
+                justifyContent: 'center',
+                marginTop: '18px',
+                maxWidth: '680px',
+              }}
+            >
+              {chipsAleatorios.map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  disabled={cargando}
+                  onClick={() => enviarPregunta(chip)}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.14)',
+                    borderRadius: '999px',
+                    color: 'inherit',
+                    fontSize: '0.82rem',
+                    padding: '6px 14px',
+                    cursor: cargando ? 'not-allowed' : 'pointer',
+                    opacity: cargando ? 0.6 : 0.92,
+                  }}
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="chat-history">
@@ -69,16 +175,42 @@ export const ChatBot: React.FC = () => {
                 </div>
                 <div className="message-box">
                   {msg.emisor === 'ia' ? (
-                    <ReactMarkdown
-                      rehypePlugins={[rehypeSanitize]}
-                      components={{
-                        a: ({ node, ...props }) => (
-                          <a {...props} target="_blank" rel="noopener noreferrer" />
-                        ),
-                      }}
-                    >
-                      {msg.texto}
-                    </ReactMarkdown>
+                    <>
+                      <ReactMarkdown
+                        rehypePlugins={[rehypeSanitize]}
+                        components={{
+                          a: ({ node, ...props }) => (
+                            <a {...props} target="_blank" rel="noopener noreferrer" />
+                          ),
+                        }}
+                      >
+                        {msg.texto}
+                      </ReactMarkdown>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-end',
+                          marginTop: '8px',
+                        }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleCopiar(msg.texto, idx)}
+                          style={{
+                            background: 'transparent',
+                            border: '1px solid rgba(255, 255, 255, 0.14)',
+                            borderRadius: '6px',
+                            color: 'inherit',
+                            fontSize: '0.72rem',
+                            padding: '3px 8px',
+                            cursor: 'pointer',
+                            opacity: 0.75,
+                          }}
+                        >
+                          {copiadoIdx === idx ? 'Copiado ✓' : 'Copiar'}
+                        </button>
+                      </div>
+                    </>
                   ) : (
                     msg.texto
                   )}
@@ -86,12 +218,16 @@ export const ChatBot: React.FC = () => {
               </div>
             ))}
 
-            {/* Estado de carga con aclaración de latencia de Render */}
+            {/* Estado de carga progresivo con aclaración de latencia de Render */}
             {cargando && (
               <div className="chat-bubble ia">
                 <div className="avatar-badge">✦</div>
                 <div className="message-box loading-state">
-                  <span>Pensando respuesta...</span>
+                  <span>
+                    {esperaExtendida
+                      ? 'Despertando el servidor o procesando respuesta...'
+                      : 'Pensando respuesta...'}
+                  </span>
                   <small
                     style={{
                       fontSize: '0.75rem',
@@ -100,7 +236,9 @@ export const ChatBot: React.FC = () => {
                       marginTop: '4px',
                     }}
                   >
-                    (Si el servidor estaba inactivo, puede tardar en responder mientras se despierta)
+                    {esperaExtendida
+                      ? 'En el plan gratuito de Render el arranque tras inactividad puede demorar unos segundos.'
+                      : '(Si el servidor estaba inactivo, puede tardar en responder mientras se despierta)'}
                   </small>
                 </div>
               </div>
