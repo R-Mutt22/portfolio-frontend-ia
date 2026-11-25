@@ -7,6 +7,9 @@ import {
   type Mensaje,
 } from '../services/chatService';
 
+const MENSAJE_ERROR_GENERICO =
+  'Ocurrió un error al consultar el asistente. Inténtalo de nuevo.';
+
 const POOL_SUGERENCIAS = [
   // Arquitectura IA & Stack Principal
   '¿Cómo funciona este asistente con Spring AI?',
@@ -97,7 +100,7 @@ export const ChatBot: React.FC = () => {
         ...prev,
         {
           emisor: 'ia',
-          texto: 'Ocurrió un error al consultar el asistente. Inténtalo de nuevo.',
+          texto: MENSAJE_ERROR_GENERICO,
         },
       ]);
     } finally {
@@ -120,6 +123,12 @@ export const ChatBot: React.FC = () => {
     } catch {
       // No interrumpe la UI si el portapapeles no está disponible
     }
+  };
+
+  const puedeCopiarMensaje = (msg: Mensaje): boolean => {
+    if (msg.emisor !== 'ia' || cargando) return false;
+    const limpio = msg.texto.trim();
+    return limpio.length > 0 && limpio !== MENSAJE_ERROR_GENERICO;
   };
 
   return (
@@ -167,15 +176,17 @@ export const ChatBot: React.FC = () => {
                       >
                         {msg.texto}
                       </ReactMarkdown>
-                      <div className="message-actions">
-                        <button
-                          type="button"
-                          className="copy-btn"
-                          onClick={() => handleCopiar(msg.texto, idx)}
-                        >
-                          {copiadoIdx === idx ? 'Copiado ✓' : 'Copiar'}
-                        </button>
-                      </div>
+                      {puedeCopiarMensaje(msg) && (
+                        <div className="message-actions">
+                          <button
+                            type="button"
+                            className="copy-btn"
+                            onClick={() => handleCopiar(msg.texto, idx)}
+                          >
+                            {copiadoIdx === idx ? 'Copiado ✓' : 'Copiar'}
+                          </button>
+                        </div>
+                      )}
                     </>
                   ) : (
                     msg.texto
