@@ -4,7 +4,29 @@ export interface Mensaje {
 }
 
 // Usa la variable de entorno de Astro o como respaldo la URL pública en Render
-const API_URL = import.meta.env.PUBLIC_BACKEND_URL || 'https://portfolio-backend-ia.onrender.com/api/chat';
+const API_URL =
+  import.meta.env.PUBLIC_BACKEND_URL ||
+  'https://portfolio-backend-ia.onrender.com/api/chat';
+
+function getBackendBaseUrl(): string {
+  return API_URL.replace(/\/api\/chat\/?$/, '');
+}
+
+/**
+ * Dispara una petición liviana a /actuator/health en segundo plano
+ * para despertar el servidor de Render antes de enviar la primera pregunta.
+ */
+export function pingBackendHealth(signal?: AbortSignal): void {
+  const healthUrl = `${getBackendBaseUrl()}/actuator/health`;
+
+  fetch(healthUrl, {
+    method: 'GET',
+    signal,
+    cache: 'no-store',
+  }).catch(() => {
+    // Silencioso: no interrumpe la UI si el servicio está iniciando o sin red
+  });
+}
 
 export async function enviarConsulta(pregunta: string): Promise<string> {
   // 1. Validación de seguridad extra antes de consumir la red
