@@ -1,13 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeSanitize from 'rehype-sanitize';
-import { enviarConsulta, type Mensaje } from '../services/chatService';
+import {
+  enviarConsulta,
+  pingBackendHealth,
+  type Mensaje,
+} from '../services/chatService';
 
 export const ChatBot: React.FC = () => {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [input, setInput] = useState('');
   const [cargando, setCargando] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    pingBackendHealth(controller.signal);
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -28,7 +39,10 @@ export const ChatBot: React.FC = () => {
     } catch (error) {
       setMensajes((prev) => [
         ...prev,
-        { emisor: 'ia', texto: 'Ocurrió un error al consultar el asistente. Inténtalo de nuevo.' }
+        {
+          emisor: 'ia',
+          texto: 'Ocurrió un error al consultar el asistente. Inténtalo de nuevo.',
+        },
       ]);
     } finally {
       setCargando(false);
@@ -55,12 +69,12 @@ export const ChatBot: React.FC = () => {
                 </div>
                 <div className="message-box">
                   {msg.emisor === 'ia' ? (
-                    <ReactMarkdown 
+                    <ReactMarkdown
                       rehypePlugins={[rehypeSanitize]}
                       components={{
                         a: ({ node, ...props }) => (
                           <a {...props} target="_blank" rel="noopener noreferrer" />
-                        )
+                        ),
                       }}
                     >
                       {msg.texto}
@@ -71,20 +85,27 @@ export const ChatBot: React.FC = () => {
                 </div>
               </div>
             ))}
-            
+
             {/* Estado de carga con aclaración de latencia de Render */}
             {cargando && (
               <div className="chat-bubble ia">
                 <div className="avatar-badge">✦</div>
                 <div className="message-box loading-state">
                   <span>Pensando respuesta...</span>
-                  <small style={{ fontSize: '0.75rem', opacity: 0.8, display: 'block', marginTop: '4px' }}>
+                  <small
+                    style={{
+                      fontSize: '0.75rem',
+                      opacity: 0.8,
+                      display: 'block',
+                      marginTop: '4px',
+                    }}
+                  >
                     (Si el servidor estaba inactivo, puede tardar en responder mientras se despierta)
                   </small>
                 </div>
               </div>
             )}
-            
+
             <div ref={chatEndRef} />
           </div>
         )}
